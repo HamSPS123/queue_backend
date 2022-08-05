@@ -20,13 +20,16 @@ export class User {
   @Column({ unique: true })
   code: string;
 
-  @Column({name: 'first_name'})
+  @Column({ name: 'first_name' })
   firstName: string;
 
-  @Column({name: 'last_name'})
+  @Column({ name: 'last_name' })
   lastName: string;
 
-  @Column({ select: false, default: `$argon2id$v=19$m=4096,t=3,p=1$8cIonv1byAfoRYj2jYR8MQ$nO1bfvmwFBrigC6v8W7kxU9w3AvmK3xTGnb10WpzxRk` }) //default = p@ssw0rd
+  @Column({ name: 'default_password', nullable: true })
+  defaultPassword: string;
+
+  @Column({ select: false })
   password: string;
 
   @Column({ name: 'role_id', select: false })
@@ -45,9 +48,9 @@ export class User {
   @JoinColumn({ name: 'role_id' })
   role: Role;
 
-  // @BeforeInsert()
-  // async setPassword() {
-  //   const hashPassword = await argon2.hash(this.password);
-  //   this.password = hashPassword;
-  // }
+  @BeforeInsert()
+  async setPassword() {
+    const hashPassword = await argon2.hash(this.password);
+    this.password = hashPassword;    
+  }
 }

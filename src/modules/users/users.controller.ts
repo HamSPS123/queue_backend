@@ -37,9 +37,8 @@ export class UsersController {
     return this.usersService.remove(+id);
   }
 
-  @Patch(':id')
+  @Patch('resetPassword/:id')
   async resetPassword(@Param('id') id: string, @Body() data: ResetPasswordDto){
-    console.log(data);
     const user = await this.usersService.resetPassword(+id, data);
     
     return user;
