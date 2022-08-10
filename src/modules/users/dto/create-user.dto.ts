@@ -9,7 +9,7 @@ export class Role {
 
 export class CreateUserDto {
   @IsNotEmpty({ message: 'ກະລຸນາປ້ອນລະຫັດພະນັກງານ' })
-  code: string;
+  username: string;
 
   @Optional()
   password: string;

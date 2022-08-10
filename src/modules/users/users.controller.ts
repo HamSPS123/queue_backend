@@ -22,10 +22,10 @@ export class UsersController {
     return this.usersService.findAll();
   }
 
-  // @Get(':id')
-  // findOne(@Param('id') id: string) {
-  //   return this.usersService.findOne(+id);
-  // }
+  @Get(':id')
+  findOne(@Param('id') id: string) {
+    return this.usersService.findOne(+id);
+  }
 
   @Patch(':id')
   update(@Param('id') id: string, @Body() data: UpdateUserDto) {
@@ -42,5 +42,20 @@ export class UsersController {
     const user = await this.usersService.resetPassword(+id, data);
     
     return user;
+  }
+
+  @Patch('defaultPassword/:id')
+  async defaultPassword(@Param('id') id: string){
+    const user = await this.usersService.defaultPassword(+id);
+
+    return user;
+  }
+
+  @Delete('removeSelected/:ids')
+  async removeSelected(@Param('ids') ids: any){
+    
+    const result = await this.usersService.removeSelected(ids);
+
+    return result;
   }
 }

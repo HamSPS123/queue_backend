@@ -18,7 +18,7 @@ export class User {
   id: number;
 
   @Column({ unique: true })
-  code: string;
+  username: string;
 
   @Column({ name: 'first_name' })
   firstName: string;
