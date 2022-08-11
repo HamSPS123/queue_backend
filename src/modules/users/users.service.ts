@@ -138,7 +138,7 @@ export class UsersService {
     }
   }
 
-  async removeSelected(selectedIds: any){
+  async removeSelected(selectedIds: any): Promise<DeleteResult>{
     try {
       const ids = selectedIds.split(",");      
       const result = await this.usersRepository.createQueryBuilder()
