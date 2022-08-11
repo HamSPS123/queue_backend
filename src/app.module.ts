@@ -1,3 +1,4 @@
+import { ServiceType } from './modules/service-types/entities/service-type.entity';
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
@@ -8,6 +9,7 @@ import { User } from './modules/users/entities/user.entity';
 import { UsersModule } from './modules/users/users.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { ConfigModule } from '@nestjs/config';
+import { ServiceTypesModule } from './modules/service-types/service-types.module';
 
 @Module({
   imports: [
@@ -19,13 +21,14 @@ import { ConfigModule } from '@nestjs/config';
       username: process.env.DB_USER,
       password: process.env.DB_PASSWORD,
       database: process.env.DB_NAME,
-      entities: [User, Role],
+      entities: [User, Role, ServiceType],
       synchronize: true,
       logging: false,
     }),
     UsersModule,
     RolesModule,
     AuthModule,
+    ServiceTypesModule,
   ],
   controllers: [AppController],
   providers: [AppService],
