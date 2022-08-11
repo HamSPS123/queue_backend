@@ -1,4 +1,13 @@
-import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
+import { ServiceType } from './../../service-types/entities/service-type.entity';
+import {
+  Column,
+  CreateDateColumn,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
+} from 'typeorm';
 
 @Entity('service')
 export class Service {
@@ -6,10 +15,14 @@ export class Service {
   id: number;
 
   @Column({ unique: true })
-  username: string;
+  code: string;
 
   @Column()
-  Name: string;
+  name: string;
+
+  @ManyToOne(() => ServiceType, (serviceTypes) => serviceTypes.id)
+  @JoinColumn({ name: 'service_type_id' })
+  serviceType: ServiceType;
 
   @CreateDateColumn({ name: 'created_at', select: false })
   createdAt: Date;

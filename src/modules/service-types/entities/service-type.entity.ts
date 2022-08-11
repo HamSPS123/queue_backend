@@ -1,4 +1,5 @@
-import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
+import { Service } from 'src/modules/services/entities/service.entity';
+import { Column, CreateDateColumn, Entity, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
 
 @Entity('service_types')
 export class ServiceType {
@@ -17,7 +18,6 @@ export class ServiceType {
   @UpdateDateColumn({ name: 'updated_at', select: false })
   updatedAt: Date;
 
-  //   @ManyToOne(() => Role, (role) => role.users)
-  //   @JoinColumn({ name: 'role_id' })
-  //   role: Role;
+  @OneToMany(() => Service, (service) => service.serviceType)
+  services: Service[];
 }

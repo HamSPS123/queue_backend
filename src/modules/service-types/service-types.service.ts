@@ -12,7 +12,7 @@ export class ServiceTypesService {
     private serviceTypesRepository: Repository<ServiceType>,
   ) {}
 
-  async create(createServiceTypeDto: CreateServiceTypeDto) {
+  async create(createServiceTypeDto: CreateServiceTypeDto): Promise<ServiceType> {
     try {
       const result = await this.serviceTypesRepository.save(createServiceTypeDto);
       return result;

@@ -3,7 +3,7 @@ import { ServicesService } from './services.service';
 import { CreateServiceDto } from './dto/create-service.dto';
 import { UpdateServiceDto } from './dto/update-service.dto';
 
-@Controller('services')
+@Controller({ version: '1', path: 'services' })
 export class ServicesController {
   constructor(private readonly servicesService: ServicesService) {}
 
@@ -30,5 +30,11 @@ export class ServicesController {
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.servicesService.remove(+id);
+  }
+
+  @Delete('removeSelected/:ids')
+  async removeSelected(@Param('ids') ids: any) {
+    const result = await this.servicesService.removeSelected(ids);
+    return result;
   }
 }
