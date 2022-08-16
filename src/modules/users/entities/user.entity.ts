@@ -1,5 +1,6 @@
 /* eslint-disable prettier/prettier */
 import * as argon2 from 'argon2';
+import { Queue } from 'src/modules/queues/entities/queue.entity';
 import { Role } from 'src/modules/roles/entities/role.entity';
 import {
   BeforeInsert,
@@ -8,6 +9,7 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -48,9 +50,12 @@ export class User {
   @JoinColumn({ name: 'role_id' })
   role: Role;
 
+  @OneToMany(() => Queue, (queue) => queue.user)
+  queues: Queue[];
+
   @BeforeInsert()
   async setPassword() {
     const hashPassword = await argon2.hash(this.password);
-    this.password = hashPassword;    
+    this.password = hashPassword;
   }
 }

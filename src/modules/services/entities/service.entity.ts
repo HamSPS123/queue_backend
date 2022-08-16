@@ -5,9 +5,11 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { Queue } from 'src/modules/queues/entities/queue.entity';
 
 @Entity('services')
 export class Service {
@@ -32,4 +34,7 @@ export class Service {
 
   @UpdateDateColumn({ name: 'updated_at', select: false })
   updatedAt: Date;
+
+  @OneToMany(() => Queue, (queue) => queue.service)
+  queues: Queue[];
 }

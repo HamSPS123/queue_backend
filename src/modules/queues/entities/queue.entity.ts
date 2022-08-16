@@ -30,10 +30,10 @@ export class Queue {
   prev_queue: string;
 
   @Column()
-  start_time: string;
+  start_time: Date;
 
   @Column()
-  end_time: string;
+  end_time: Date;
 
   @ManyToOne(() => Counter, (counter) => counter.id)
   @JoinColumn({ name: 'counter_id' })

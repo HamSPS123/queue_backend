@@ -1,4 +1,5 @@
-import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
+import { Queue } from 'src/modules/queues/entities/queue.entity';
+import { Column, CreateDateColumn, Entity, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
 
 @Entity('queue_status')
 export class QueueStatus {
@@ -14,6 +15,6 @@ export class QueueStatus {
   @UpdateDateColumn({ name: 'updated_at', select: false })
   updatedAt: Date;
 
-  //   @OneToMany(() => Service, (service) => service.type)
-  //   services: Service[];
+  @OneToMany(() => Queue, (queue) => queue.status)
+  queues: Queue[];
 }
