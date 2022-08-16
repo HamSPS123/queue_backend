@@ -22,7 +22,13 @@ export class ServicesService {
   async create(createServiceDto: CreateServiceDto): Promise<Service> {
     try {
       const result = await this.serviceRepository.save(createServiceDto);
-      return result;
+
+      if (result) {
+        const newData = this.findOne(result.id);
+        return newData;
+      } else {
+        throw new NotFoundException('ບໍ່ພົບຜູ້ໃຊ້');
+      }
     } catch (error) {
       if (error.errno == 1062) {
         throw new HttpException('ລະຫັດບໍ່ສາມາດຊ້ຳກັນໄດ້ ກະລຸນາລອງໃໝ່', HttpStatus.CONFLICT);
