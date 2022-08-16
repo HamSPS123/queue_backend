@@ -9,7 +9,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
-@Entity('service')
+@Entity('services')
 export class Service {
   @PrimaryGeneratedColumn()
   id: number;
@@ -17,12 +17,15 @@ export class Service {
   @Column({ unique: true })
   code: string;
 
-  @Column()
-  name: string;
+  @Column({ name: 'la_name' })
+  laName: string;
+
+  @Column({ name: 'en_name', nullable: true })
+  enName: string;
 
   @ManyToOne(() => ServiceType, (serviceTypes) => serviceTypes.id)
-  @JoinColumn({ name: 'service_type_id' })
-  serviceType: ServiceType;
+  @JoinColumn({ name: 'type_id' })
+  type: ServiceType;
 
   @CreateDateColumn({ name: 'created_at', select: false })
   createdAt: Date;

@@ -18,6 +18,6 @@ export class ServiceType {
   @UpdateDateColumn({ name: 'updated_at', select: false })
   updatedAt: Date;
 
-  @OneToMany(() => Service, (service) => service.serviceType)
+  @OneToMany(() => Service, (service) => service.type)
   services: Service[];
 }

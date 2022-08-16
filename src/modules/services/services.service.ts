@@ -1,10 +1,10 @@
 import {
+  BadRequestException,
   HttpException,
   HttpStatus,
   Injectable,
   InternalServerErrorException,
   NotFoundException,
-  BadRequestException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DeleteResult, FindOneOptions, Repository } from 'typeorm';
@@ -38,13 +38,17 @@ export class ServicesService {
   }
 
   async findAll(): Promise<Service[]> {
-    const result = await this.serviceRepository.find({ relations: ['serviceType'], order: { id: 'DESC' } });
-    return result;
+    try {
+      const result = await this.serviceRepository.find({ relations: ['type'], order: { id: 'DESC' } });
+      return result;
+    } catch (error) {
+      throw new BadRequestException(error.message);
+    }
   }
 
   async findOne(id: number): Promise<Service> {
     try {
-      const options: FindOneOptions<Service> = { where: { id: id }, relations: ['serviceType'] };
+      const options: FindOneOptions<Service> = { where: { id: id }, relations: ['type'] };
       const Service = await this.serviceRepository.findOne(options);
 
       if (!Service) {
@@ -78,7 +82,7 @@ export class ServicesService {
     }
   }
 
-  async remove(id: number) {
+  async remove(id: number): Promise<DeleteResult> {
     try {
       const result = await this.serviceRepository.delete(id);
       return result;
