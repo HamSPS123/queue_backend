@@ -1,4 +1,11 @@
-import { HttpException, HttpStatus, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
+import {
+  HttpException,
+  HttpStatus,
+  Injectable,
+  InternalServerErrorException,
+  NotFoundException,
+  BadRequestException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DeleteResult, FindOneOptions, Repository } from 'typeorm';
 import { CreateServiceDto } from './dto/create-service.dto';
@@ -15,7 +22,13 @@ export class ServicesService {
   async create(createServiceDto: CreateServiceDto): Promise<Service> {
     try {
       const result = await this.serviceRepository.save(createServiceDto);
-      return result;
+
+      if (result) {
+        const newData = this.findOne(result.id);
+        return newData;
+      } else {
+        throw new NotFoundException('ບໍ່ພົບຜູ້ໃຊ້');
+      }
     } catch (error) {
       if (error.errno == 1062) {
         throw new HttpException('ລະຫັດບໍ່ສາມາດຊ້ຳກັນໄດ້ ກະລຸນາລອງໃໝ່', HttpStatus.CONFLICT);
@@ -29,9 +42,9 @@ export class ServicesService {
     return result;
   }
 
-  async findOne(id: number) {
+  async findOne(id: number): Promise<Service> {
     try {
-      const options: FindOneOptions<Service> = { where: { id: id } };
+      const options: FindOneOptions<Service> = { where: { id: id }, relations: ['serviceType'] };
       const Service = await this.serviceRepository.findOne(options);
 
       if (!Service) {
@@ -48,7 +61,7 @@ export class ServicesService {
     }
   }
 
-  async update(id: number, updateServiceDto: UpdateServiceDto) {
+  async update(id: number, updateServiceDto: UpdateServiceDto): Promise<Service> {
     try {
       const result = await this.serviceRepository.update(id, updateServiceDto);
       if (result.affected) {
