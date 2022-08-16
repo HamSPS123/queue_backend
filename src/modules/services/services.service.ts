@@ -1,4 +1,11 @@
-import { HttpException, HttpStatus, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  HttpException,
+  HttpStatus,
+  Injectable,
+  InternalServerErrorException,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DeleteResult, FindOneOptions, Repository } from 'typeorm';
 import { CreateServiceDto } from './dto/create-service.dto';
@@ -25,13 +32,17 @@ export class ServicesService {
   }
 
   async findAll(): Promise<Service[]> {
-    const result = await this.serviceRepository.find({ relations: ['serviceType'], order: { id: 'DESC' } });
-    return result;
+    try {
+      const result = await this.serviceRepository.find({ relations: ['type'], order: { id: 'DESC' } });
+      return result;
+    } catch (error) {
+      throw new BadRequestException(error.message);
+    }
   }
 
-  async findOne(id: number) {
+  async findOne(id: number): Promise<Service> {
     try {
-      const options: FindOneOptions<Service> = { where: { id: id } };
+      const options: FindOneOptions<Service> = { where: { id: id }, relations: ['type'] };
       const Service = await this.serviceRepository.findOne(options);
 
       if (!Service) {
@@ -48,7 +59,7 @@ export class ServicesService {
     }
   }
 
-  async update(id: number, updateServiceDto: UpdateServiceDto) {
+  async update(id: number, updateServiceDto: UpdateServiceDto): Promise<Service> {
     try {
       const result = await this.serviceRepository.update(id, updateServiceDto);
       if (result.affected) {
@@ -65,7 +76,7 @@ export class ServicesService {
     }
   }
 
-  async remove(id: number) {
+  async remove(id: number): Promise<DeleteResult> {
     try {
       const result = await this.serviceRepository.delete(id);
       return result;
