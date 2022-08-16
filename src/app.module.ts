@@ -12,6 +12,8 @@ import { AuthModule } from './modules/auth/auth.module';
 import { ConfigModule } from '@nestjs/config';
 import { ServiceTypesModule } from './modules/service-types/service-types.module';
 import { Service } from './modules/services/entities/service.entity';
+import { Counter } from './modules/counters/entities/counter.entity';
+import { CountersModule } from './modules/counters/counters.module';
 
 @Module({
   imports: [
@@ -23,7 +25,7 @@ import { Service } from './modules/services/entities/service.entity';
       username: process.env.DB_USER,
       password: process.env.DB_PASSWORD,
       database: process.env.DB_NAME,
-      entities: [User, Role, ServiceType, Service],
+      entities: [User, Role, ServiceType, Service, Counter],
 
       synchronize: true,
       logging: false,
@@ -33,6 +35,7 @@ import { Service } from './modules/services/entities/service.entity';
     AuthModule,
     ServiceTypesModule,
     ServicesModule,
+    CountersModule,
   ],
   controllers: [AppController],
   providers: [AppService],
