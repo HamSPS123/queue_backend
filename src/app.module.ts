@@ -14,6 +14,9 @@ import { ServiceTypesModule } from './modules/service-types/service-types.module
 import { Service } from './modules/services/entities/service.entity';
 import { Counter } from './modules/counters/entities/counter.entity';
 import { CountersModule } from './modules/counters/counters.module';
+import { QueueStatus } from './modules/queue-statuses/entities/queue-status.entity';
+import { Queue } from './modules/queues/entities/queue.entity';
+import { QueuesModule } from './modules/queues/queues.module';
 
 @Module({
   imports: [
@@ -25,7 +28,7 @@ import { CountersModule } from './modules/counters/counters.module';
       username: process.env.DB_USER,
       password: process.env.DB_PASSWORD,
       database: process.env.DB_NAME,
-      entities: [User, Role, ServiceType, Service, Counter],
+      entities: [User, Role, ServiceType, Service, Counter, QueueStatus, Queue],
 
       synchronize: true,
       logging: false,
@@ -36,6 +39,7 @@ import { CountersModule } from './modules/counters/counters.module';
     ServiceTypesModule,
     ServicesModule,
     CountersModule,
+    QueuesModule,
   ],
   controllers: [AppController],
   providers: [AppService],
