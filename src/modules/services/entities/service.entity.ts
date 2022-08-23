@@ -25,6 +25,9 @@ export class Service {
   @Column({ name: 'en_name', nullable: true })
   enName: string;
 
+  @Column({ name: 'type_id' })
+  typeId: number;
+
   @ManyToOne(() => ServiceType, (serviceTypes) => serviceTypes.id)
   @JoinColumn({ name: 'type_id' })
   type: ServiceType;

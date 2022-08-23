@@ -1,13 +1,12 @@
 /* eslint-disable prettier/prettier */
 import { BadRequestException, HttpException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { DeleteResult, FindManyOptions, FindOneOptions, In, Repository, UpdateResult } from 'typeorm';
-import { CreateUserDto, ResetPasswordDto, Role } from './dto/create-user.dto';
+import { DeleteResult, FindManyOptions, FindOneOptions, Repository } from 'typeorm';
+import { CreateUserDto, ResetPasswordDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
 import * as argon2 from 'argon2';
 import { UtilsService } from '../utils/utils.service';
-import { from } from 'rxjs';
 
 @Injectable()
 export class UsersService {
@@ -122,13 +121,13 @@ export class UsersService {
   async findOne(id: number): Promise<User> {
     try {
       const options: FindOneOptions<User> = { where: { id: id }, relations: ['role'] };
-      const level = await this.usersRepository.findOne(options);
+      const user = await this.usersRepository.findOne(options);
 
-      if (!level) {
+      if (!user) {
         throw new NotFoundException('ບໍ່ພົບຂໍ້ມູນ');
       }
 
-      return level;
+      return user;
     } catch (error) {
       if (error.status) {
         throw new HttpException(error.message, error.status);

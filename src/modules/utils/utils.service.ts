@@ -7,4 +7,20 @@ export class UtilsService {
 
     return number;
   }
+
+  prefix(concat: number) {
+    let prefix: string;
+    const length = concat.toString().length;
+
+    if (length === 3) {
+      prefix = '';
+    } else if (length === 2) {
+      prefix = '0';
+    } else {
+      prefix = '00';
+    }
+
+    const result = prefix + concat;
+    return result;
+  }
 }

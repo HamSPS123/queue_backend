@@ -1,3 +1,4 @@
+import { Queue } from 'src/modules/queues/entities/queue.entity';
 import { Service } from 'src/modules/services/entities/service.entity';
 import { Column, CreateDateColumn, Entity, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
 
@@ -20,4 +21,7 @@ export class ServiceType {
 
   @OneToMany(() => Service, (service) => service.type)
   services: Service[];
+
+  @OneToMany(() => Queue, (queue) => queue.serviceType)
+  queues: Queue[];
 }
