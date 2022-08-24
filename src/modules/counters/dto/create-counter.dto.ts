@@ -6,4 +6,7 @@ export class CreateCounterDto {
 
   @IsOptional()
   avgWaitingTime: number;
+
+  @IsNotEmpty({ message: 'ກະລຸນາປ້ອນລະຫັດໂຊນ' })
+  zoneId: number;
 }

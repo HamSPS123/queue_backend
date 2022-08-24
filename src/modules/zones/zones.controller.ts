@@ -3,7 +3,7 @@ import { ZonesService } from './zones.service';
 import { CreateZoneDto } from './dto/create-zone.dto';
 import { UpdateZoneDto } from './dto/update-zone.dto';
 
-@Controller('zones')
+@Controller({ version: '1', path: 'zones' })
 export class ZonesController {
   constructor(private readonly zonesService: ZonesService) {}
 
@@ -13,8 +13,9 @@ export class ZonesController {
   }
 
   @Get()
-  findAll() {
-    return this.zonesService.findAll();
+  async findAll() {
+    const result = await this.zonesService.findAll();
+    return result;
   }
 
   @Get(':id')
