@@ -35,7 +35,7 @@ export class CountersService {
   }
 
   async findAll(): Promise<Counter[]> {
-    const result = await this.countersRepository.find({ order: { id: 'DESC' } });
+    const result = await this.countersRepository.find({ relations: ['zone'], order: { id: 'DESC' } });
     return result;
   }
 

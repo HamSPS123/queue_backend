@@ -17,6 +17,8 @@ import { CountersModule } from './modules/counters/counters.module';
 import { QueueStatus } from './modules/queue-statuses/entities/queue-status.entity';
 import { Queue } from './modules/queues/entities/queue.entity';
 import { QueuesModule } from './modules/queues/queues.module';
+import { Zone } from './modules/zones/entities/zone.entity';
+import { ZonesModule } from './modules/zones/zones.module';
 
 @Module({
   imports: [
@@ -28,7 +30,7 @@ import { QueuesModule } from './modules/queues/queues.module';
       username: process.env.DB_USER,
       password: process.env.DB_PASSWORD,
       database: process.env.DB_NAME,
-      entities: [User, Role, ServiceType, Service, Counter, QueueStatus, Queue],
+      entities: [User, Role, ServiceType, Service, Counter, QueueStatus, Queue, Zone],
 
       synchronize: true,
       logging: false,
@@ -40,6 +42,7 @@ import { QueuesModule } from './modules/queues/queues.module';
     ServicesModule,
     CountersModule,
     QueuesModule,
+    ZonesModule,
   ],
   controllers: [AppController],
   providers: [AppService],

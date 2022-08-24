@@ -1,5 +1,6 @@
 import { Queue } from 'src/modules/queues/entities/queue.entity';
 import { Service } from 'src/modules/services/entities/service.entity';
+import { Zone } from 'src/modules/zones/entities/zone.entity';
 import { Column, CreateDateColumn, Entity, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
 
 @Entity('service_types')
@@ -24,4 +25,7 @@ export class ServiceType {
 
   @OneToMany(() => Queue, (queue) => queue.serviceType)
   queues: Queue[];
+
+  @OneToMany(() => Zone, (zone) => zone.serviceType)
+  zones: Zone[];
 }
