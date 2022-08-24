@@ -32,7 +32,7 @@ import { ZonesModule } from './modules/zones/zones.module';
       database: process.env.DB_NAME,
       entities: [User, Role, ServiceType, Service, Counter, QueueStatus, Queue, Zone],
 
-      synchronize: true,
+      synchronize: false,
       logging: false,
     }),
     UsersModule,
