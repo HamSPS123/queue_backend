@@ -2,34 +2,46 @@ import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/commo
 import { ZonesService } from './zones.service';
 import { CreateZoneDto } from './dto/create-zone.dto';
 import { UpdateZoneDto } from './dto/update-zone.dto';
+import { Zone } from './entities/zone.entity';
+import { DeleteResult } from 'typeorm';
 
 @Controller({ version: '1', path: 'zones' })
 export class ZonesController {
   constructor(private readonly zonesService: ZonesService) {}
 
   @Post()
-  create(@Body() createZoneDto: CreateZoneDto) {
-    return this.zonesService.create(createZoneDto);
+  async create(@Body() createZoneDto: CreateZoneDto): Promise<Zone> {
+    const result = await this.zonesService.create(createZoneDto);
+    return result;
   }
 
   @Get()
-  async findAll() {
+  async findAll(): Promise<Zone[]> {
     const result = await this.zonesService.findAll();
     return result;
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.zonesService.findOne(+id);
+  async findOne(@Param('id') id: string): Promise<Zone> {
+    const result = await this.zonesService.findOne(+id);
+    return result;
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateZoneDto: UpdateZoneDto) {
-    return this.zonesService.update(+id, updateZoneDto);
+  async update(@Param('id') id: string, @Body() updateZoneDto: UpdateZoneDto): Promise<Zone> {
+    const result = await this.zonesService.update(+id, updateZoneDto);
+    return result;
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.zonesService.remove(+id);
+  async remove(@Param('id') id: string): Promise<DeleteResult> {
+    const result = await this.zonesService.remove(+id);
+    return result;
+  }
+
+  @Delete('removeSelected/:ids')
+  async removeSeleted(@Param('ids') ids: any): Promise<DeleteResult> {
+    const result = await this.zonesService.removeSelected(ids);
+    return result;
   }
 }

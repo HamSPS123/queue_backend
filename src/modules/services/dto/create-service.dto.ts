@@ -1,6 +1,11 @@
 import { Optional } from '@nestjs/common';
-import { IsNotEmpty } from 'class-validator';
+import { Type } from 'class-transformer';
+import { IsNotEmpty, IsNotEmptyObject, IsObject, ValidateNested } from 'class-validator';
 
+export class CommonModel {
+  @IsNotEmpty()
+  id: number;
+}
 export class CreateServiceDto {
   @IsNotEmpty({ message: 'ກະລຸນາປ້ອນລະຫັດບໍລີການ' })
   code: string;
@@ -11,6 +16,9 @@ export class CreateServiceDto {
   @Optional()
   enName: string;
 
-  @IsNotEmpty({ message: 'ກະລຸນາປ້ອນສິດຜູ້ໃຊ້' })
-  typeId: number;
+  @IsNotEmptyObject()
+  @IsObject()
+  @ValidateNested()
+  @Type(() => CommonModel)
+  type: CommonModel;
 }

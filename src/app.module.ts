@@ -14,7 +14,7 @@ import { ServiceTypesModule } from './modules/service-types/service-types.module
 import { Service } from './modules/services/entities/service.entity';
 import { Counter } from './modules/counters/entities/counter.entity';
 import { CountersModule } from './modules/counters/counters.module';
-import { QueueStatus } from './modules/queue-statuses/entities/queue-status.entity';
+import { QueueStatus } from './modules/queues/entities/queue-status.entity';
 import { Queue } from './modules/queues/entities/queue.entity';
 import { QueuesModule } from './modules/queues/queues.module';
 import { Zone } from './modules/zones/entities/zone.entity';

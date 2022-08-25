@@ -31,7 +31,7 @@ export class Zone {
   @UpdateDateColumn({ name: 'updated_at' })
   updatedAt: Date;
 
-  @ManyToOne(() => ServiceType, (serviceType) => serviceType.id)
+  @ManyToOne(() => ServiceType, (serviceType) => serviceType.zones)
   @JoinColumn({ name: 'service_type_id' })
   serviceType: ServiceType;
 

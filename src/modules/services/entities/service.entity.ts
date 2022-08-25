@@ -28,15 +28,15 @@ export class Service {
   @Column({ name: 'type_id' })
   typeId: number;
 
-  @ManyToOne(() => ServiceType, (serviceTypes) => serviceTypes.id)
-  @JoinColumn({ name: 'type_id' })
-  type: ServiceType;
-
-  @CreateDateColumn({ name: 'created_at', select: false })
+  @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;
 
-  @UpdateDateColumn({ name: 'updated_at', select: false })
+  @UpdateDateColumn({ name: 'updated_at' })
   updatedAt: Date;
+
+  @ManyToOne(() => ServiceType, (serviceTypes) => serviceTypes.services)
+  @JoinColumn({ name: 'type_id' })
+  type: ServiceType;
 
   @OneToMany(() => Queue, (queue) => queue.service)
   queues: Queue[];

@@ -2,38 +2,45 @@ import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/commo
 import { ServicesService } from './services.service';
 import { CreateServiceDto } from './dto/create-service.dto';
 import { UpdateServiceDto } from './dto/update-service.dto';
+import { Service } from './entities/service.entity';
+import { DeleteResult } from 'typeorm';
 
 @Controller({ version: '1', path: 'services' })
 export class ServicesController {
   constructor(private readonly servicesService: ServicesService) {}
 
   @Post()
-  create(@Body() createServiceDto: CreateServiceDto) {
-    return this.servicesService.create(createServiceDto);
+  async create(@Body() createServiceDto: CreateServiceDto): Promise<Service> {
+    const result = await this.servicesService.create(createServiceDto);
+    return result;
   }
 
   @Get()
-  findAll() {
-    return this.servicesService.findAll();
+  async findAll(): Promise<Service[]> {
+    const result = await this.servicesService.findAll();
+    return result;
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.servicesService.findOne(+id);
+  async findOne(@Param('id') id: string): Promise<Service> {
+    const result = await this.servicesService.findOne(+id);
+    return result;
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateServiceDto: UpdateServiceDto) {
-    return this.servicesService.update(+id, updateServiceDto);
+  async update(@Param('id') id: string, @Body() updateServiceDto: UpdateServiceDto): Promise<Service> {
+    const result = await this.servicesService.update(+id, updateServiceDto);
+    return result;
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.servicesService.remove(+id);
+  async remove(@Param('id') id: string): Promise<DeleteResult> {
+    const result = await this.servicesService.remove(+id);
+    return result;
   }
 
   @Delete('removeSelected/:ids')
-  async removeSelected(@Param('ids') ids: any) {
+  async removeSelected(@Param('ids') ids: any): Promise<DeleteResult> {
     const result = await this.servicesService.removeSelected(ids);
     return result;
   }

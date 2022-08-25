@@ -1,6 +1,7 @@
 /* eslint-disable prettier/prettier */
 import { Optional } from '@nestjs/common';
-import { IsNotEmpty } from 'class-validator';
+import { Type } from 'class-transformer';
+import { IsNotEmpty, IsNotEmptyObject, IsObject, ValidateNested } from 'class-validator';
 
 export class Role {
   id: number;
@@ -23,7 +24,10 @@ export class CreateUserDto {
   @IsNotEmpty({ message: 'ກະລຸນາປ້ອນນາມສະກຸນພະນັກງານ' })
   lastName: string;
 
-  @IsNotEmpty({ message: 'ກະລຸນາປ້ອນສິດຜູ້ໃຊ້' })
+  @IsNotEmptyObject()
+  @IsObject()
+  @ValidateNested()
+  @Type(() => Role)
   role: Role;
 }
 
@@ -31,5 +35,3 @@ export class ResetPasswordDto {
   @IsNotEmpty({ message: 'ກະລຸນາປ້ອນລະຫັດຜ່ານ' })
   newPassword: string;
 }
-
-

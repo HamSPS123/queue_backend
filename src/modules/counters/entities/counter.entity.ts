@@ -28,13 +28,13 @@ export class Counter {
   @Column({ name: 'zone_id' })
   zoneId: number;
 
-  @CreateDateColumn({ name: 'created_at', select: false })
+  @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;
 
-  @UpdateDateColumn({ name: 'updated_at', select: false })
+  @UpdateDateColumn({ name: 'updated_at' })
   updatedAt: Date;
 
-  @ManyToOne(() => Zone, (zone) => zone.id)
+  @ManyToOne(() => Zone, (zone) => zone.counters)
   @JoinColumn({ name: 'zone_id' })
   zone: Zone;
 

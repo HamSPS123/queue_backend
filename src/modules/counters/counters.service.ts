@@ -1,13 +1,6 @@
-import {
-  BadRequestException,
-  ConflictException,
-  HttpException,
-  HttpStatus,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
+import { BadRequestException, ConflictException, HttpException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { DeleteResult, FindOneOptions, Repository } from 'typeorm';
+import { DeleteResult, Repository } from 'typeorm';
 import { CreateCounterDto } from './dto/create-counter.dto';
 import { UpdateCounterDto } from './dto/update-counter.dto';
 import { Counter } from './entities/counter.entity';
@@ -24,7 +17,8 @@ export class CountersService {
       const result = await this.countersRepository.save(createCounterDto);
 
       if (result) {
-        return result;
+        const newData = await this.findOne(result.id);
+        return newData;
       }
     } catch (error) {
       if (error.errno === 1062) {
@@ -35,26 +29,65 @@ export class CountersService {
   }
 
   async findAll(): Promise<Counter[]> {
-    const result = await this.countersRepository.find({ relations: ['zone'], order: { id: 'DESC' } });
-    return result;
+    try {
+      const selectField = [
+        'cnt.id',
+        'cnt.name',
+        'cnt.avgWaitingTime',
+        'cnt.status',
+        'zn.id',
+        'zn.code',
+        'zn.name',
+        'zn.typeId',
+        'cnt.createdAt',
+        'cnt.updatedAt',
+      ];
+
+      const counters = await this.countersRepository
+        .createQueryBuilder('cnt')
+        .select(selectField)
+        .leftJoin('cnt.zone', 'zn')
+        .orderBy('cnt.id', 'DESC')
+        .getMany();
+
+      return counters;
+    } catch (error) {
+      throw new BadRequestException(error.message);
+    }
   }
 
   async findOne(id: number): Promise<Counter> {
     try {
-      const options: FindOneOptions<Counter> = { where: { id: id } };
-      const Counter = await this.countersRepository.findOne(options);
+      const selectField = [
+        'cnt.id',
+        'cnt.name',
+        'cnt.avgWaitingTime',
+        'cnt.status',
+        'zn.id',
+        'zn.code',
+        'zn.name',
+        'zn.typeId',
+        'cnt.createdAt',
+        'cnt.updatedAt',
+      ];
 
-      if (!Counter) {
+      const counters = await this.countersRepository
+        .createQueryBuilder('cnt')
+        .select(selectField)
+        .leftJoin('cnt.zone', 'zn')
+        .where('cnt.id=:id', { id: id })
+        .getOne();
+
+      if (!counters) {
         throw new NotFoundException('ບໍ່ພົບຂໍ້ມູນ');
       }
 
-      return Counter;
+      return counters;
     } catch (error) {
       if (error.status) {
         throw new HttpException(error.message, error.status);
-      } else {
-        throw new HttpException('ເກີດຂໍ້ຜິດພາດ', HttpStatus.BAD_REQUEST);
       }
+      throw new BadRequestException(error.message);
     }
   }
 

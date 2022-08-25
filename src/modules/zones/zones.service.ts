@@ -27,7 +27,22 @@ export class ZonesService {
 
   async findAll(): Promise<Zone[]> {
     try {
-      const result = await this.zonesRepository.find({ relations: ['serviceType'] });
+      const selectField = [
+        'zn.id',
+        'zn.code',
+        'zn.name',
+        'zn.createdAt',
+        'zn.updatedAt',
+        'svt.id',
+        'svt.code',
+        'svt.name',
+      ];
+      const result = await this.zonesRepository
+        .createQueryBuilder('zn')
+        .select(selectField)
+        .leftJoin('zn.serviceType', 'svt')
+        .orderBy('zn.id', 'DESC')
+        .getMany();
       if (result) return result;
 
       throw new NotFoundException('ບໍ່ພົບຂໍ້ມູນ');
@@ -41,7 +56,22 @@ export class ZonesService {
 
   async findOne(id: number): Promise<Zone> {
     try {
-      const result = await this.zonesRepository.findOne({ where: { id: id }, relations: ['serviceType'] });
+      const selectField = [
+        'zn.id',
+        'zn.code',
+        'zn.name',
+        'zn.createdAt',
+        'zn.updatedAt',
+        'svt.id',
+        'svt.code',
+        'svt.name',
+      ];
+      const result = await this.zonesRepository
+        .createQueryBuilder('zn')
+        .select(selectField)
+        .leftJoin('zn.serviceType', 'svt')
+        .where({ id: id })
+        .getOne();
       if (result) {
         return result;
       }
@@ -82,6 +112,25 @@ export class ZonesService {
       if (error.status) throw new HttpException(error.message, error.status);
 
       throw new BadRequestException(error.message);
+    }
+  }
+
+  async removeSelected(selectedIds: any): Promise<DeleteResult> {
+    try {
+      const ids = selectedIds.split(',');
+      const result = await this.zonesRepository
+        .createQueryBuilder()
+        .delete()
+        .where('id In(:id)', { id: ids })
+        .execute();
+
+      if (result.affected) {
+        return result;
+      } else {
+        throw new BadRequestException('ບໍ່ພົບຂໍ້ມູນໃນລະບົບ');
+      }
+    } catch (error) {
+      throw new BadRequestException(error);
     }
   }
 }

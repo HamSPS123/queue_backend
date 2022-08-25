@@ -34,16 +34,16 @@ export class User {
   @Column({ select: false })
   password: string;
 
-  @Column({ name: 'role_id', select: false })
+  @Column({ name: 'role_id' })
   roleId: number;
 
   @Column({ name: 'is_active', default: true })
   isActive: boolean;
 
-  @CreateDateColumn({ name: 'created_at', select: false })
+  @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;
 
-  @UpdateDateColumn({ name: 'updated_at', select: false })
+  @UpdateDateColumn({ name: 'updated_at' })
   updatedAt: Date;
 
   @ManyToOne(() => Role, (role) => role.users)

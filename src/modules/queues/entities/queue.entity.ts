@@ -1,5 +1,4 @@
 import { Counter } from 'src/modules/counters/entities/counter.entity';
-import { QueueStatus } from 'src/modules/queue-statuses/entities/queue-status.entity';
 import { ServiceType } from 'src/modules/service-types/entities/service-type.entity';
 import { Service } from 'src/modules/services/entities/service.entity';
 import { User } from 'src/modules/users/entities/user.entity';
@@ -12,6 +11,7 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { QueueStatus } from './queue-status.entity';
 
 @Entity('queues')
 export class Queue {
@@ -51,29 +51,29 @@ export class Queue {
   @Column({ name: 'status_id' })
   statusId: number;
 
-  @ManyToOne(() => ServiceType, (servicetype) => servicetype.id)
-  @JoinColumn({ name: 'service_type_id' })
-  serviceType: ServiceType;
-
-  @ManyToOne(() => Service, (service) => service.id)
-  @JoinColumn({ name: 'service_id' })
-  service: Service;
-
-  @ManyToOne(() => Counter, (counter) => counter.id)
-  @JoinColumn({ name: 'counter_id' })
-  counter: Counter;
-
-  @ManyToOne(() => User, (user) => user.id, { nullable: true })
-  @JoinColumn({ name: 'user_id' })
-  user: User;
-
-  @ManyToOne(() => QueueStatus, (queueStatus) => queueStatus.id)
-  @JoinColumn({ name: 'status_id' })
-  status: QueueStatus;
-
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;
 
   @UpdateDateColumn({ name: 'updated_at' })
   updatedAt: Date;
+
+  @ManyToOne(() => ServiceType, (servicetype) => servicetype.queues)
+  @JoinColumn({ name: 'service_type_id' })
+  serviceType: ServiceType;
+
+  @ManyToOne(() => Service, (service) => service.queues)
+  @JoinColumn({ name: 'service_id' })
+  service: Service;
+
+  @ManyToOne(() => Counter, (counter) => counter.queues)
+  @JoinColumn({ name: 'counter_id' })
+  counter: Counter;
+
+  @ManyToOne(() => User, (user) => user.queues, { nullable: true })
+  @JoinColumn({ name: 'user_id' })
+  user: User;
+
+  @ManyToOne(() => QueueStatus, (queueStatus) => queueStatus.queues)
+  @JoinColumn({ name: 'status_id' })
+  status: QueueStatus;
 }

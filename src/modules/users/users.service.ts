@@ -21,17 +21,17 @@ export class UsersService {
       const ramdomNumber: string = this.utilsService.RandomNumber(100000, 999999).toString();
       const hashPassword = await argon2.hash(ramdomNumber);
       const newObject = { ...createDto, defaultPassword: ramdomNumber, password: hashPassword };
-      
+
       const result = await this.usersRepository.save(newObject);
       // if (result) {
       //   return result;
       // }
 
-      if(result){
+      if (result) {
         const newData = await this.findOne(result.id);
 
         return newData;
-      }else{
+      } else {
         throw new NotFoundException('ບໍ່ພົບຂໍ້ມູນຜູ້ໃຊ້ນີ້');
       }
     } catch (error) {
@@ -43,25 +43,35 @@ export class UsersService {
   }
 
   async findAll(): Promise<User[]> {
-    const options: FindManyOptions<User> = { relations: ['role'], order: { id: 'DESC' } };
+    const options: FindManyOptions<User> = {
+      select: [
+        'id',
+        'username',
+        'firstName',
+        'lastName',
+        'defaultPassword',
+        'isActive',
+        'createdAt',
+        'updatedAt',
+        'role',
+      ],
+      relations: ['role'],
+      order: { id: 'DESC' },
+    };
     const users = await this.usersRepository.find(options);
 
     return users;
   }
 
-  // findOne(id: number) {
-  //   return `This action returns a #${id} user`;
-  // }
-
   async update(id: number, data: UpdateUserDto): Promise<User> {
     try {
       const result = await this.usersRepository.update(id, data);
 
-      if(result.affected){
+      if (result.affected) {
         const newData = await this.findOne(id);
         return newData;
-      }else{
-        throw new NotFoundException("ບໍ່ສາມາດແກ້ໄຂຂໍ້ມູນໄດ້");
+      } else {
+        throw new NotFoundException('ບໍ່ສາມາດແກ້ໄຂຂໍ້ມູນໄດ້');
       }
     } catch (error) {
       if (error.errno == 1062) {
@@ -78,17 +88,17 @@ export class UsersService {
   }
 
   async resetPassword(id: number, data: ResetPasswordDto): Promise<User> {
-    try {      
+    try {
       const user = new User();
       user.password = await argon2.hash(data.newPassword);
       user.defaultPassword = null;
-      
+
       const result = await this.usersRepository.update(id, user);
 
-      if(result.affected){
+      if (result.affected) {
         const newData = this.findOne(id);
         return newData;
-      }else{
+      } else {
         throw new NotFoundException('ບໍ່ສາມາດແກ້ໄຂຂໍ້ມູນໄດ້');
       }
     } catch (error) {
@@ -97,20 +107,20 @@ export class UsersService {
   }
 
   async defaultPassword(id: number): Promise<User> {
-    try { 
+    try {
       const user = new User();
       const ramdomNumber: string = this.utilsService.RandomNumber(100000, 999999).toString();
       const hashPassword: string = await argon2.hash(ramdomNumber);
 
       user.password = hashPassword;
       user.defaultPassword = ramdomNumber;
-      
+
       const result = await this.usersRepository.update(id, user);
 
-      if(result.affected){
+      if (result.affected) {
         const newData = this.findOne(id);
         return newData;
-      }else{
+      } else {
         throw new NotFoundException('ບໍ່ສາມາດແກ້ໄຂຂໍ້ມູນໄດ້');
       }
     } catch (error) {
@@ -120,7 +130,21 @@ export class UsersService {
 
   async findOne(id: number): Promise<User> {
     try {
-      const options: FindOneOptions<User> = { where: { id: id }, relations: ['role'] };
+      const options: FindOneOptions<User> = {
+        select: [
+          'id',
+          'username',
+          'firstName',
+          'lastName',
+          'defaultPassword',
+          'isActive',
+          'createdAt',
+          'updatedAt',
+          'role',
+        ],
+        where: { id: id },
+        relations: ['role'],
+      };
       const user = await this.usersRepository.findOne(options);
 
       if (!user) {
@@ -137,18 +161,18 @@ export class UsersService {
     }
   }
 
-  async removeSelected(selectedIds: any): Promise<DeleteResult>{
+  async removeSelected(selectedIds: any): Promise<DeleteResult> {
     try {
-      const ids = selectedIds.split(",");      
-      const result = await this.usersRepository.createQueryBuilder()
-      .delete()
-      .where("id In(:id)", { id: ids })
-      .execute();
+      const ids = selectedIds.split(',');
+      const result = await this.usersRepository
+        .createQueryBuilder()
+        .delete()
+        .where('id In(:id)', { id: ids })
+        .execute();
 
-    if(result)
-    return result;
+      if (result) return result;
 
-    throw new BadRequestException("ເກີດຂໍ້ຜິດພາດ")
+      throw new BadRequestException('ເກີດຂໍ້ຜິດພາດ');
     } catch (error) {
       throw new BadRequestException(error);
     }

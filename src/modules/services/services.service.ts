@@ -7,7 +7,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { DeleteResult, FindOneOptions, Repository } from 'typeorm';
+import { DeleteResult, Repository } from 'typeorm';
 import { CreateServiceDto } from './dto/create-service.dto';
 import { UpdateServiceDto } from './dto/update-service.dto';
 import { Service } from './entities/service.entity';
@@ -39,7 +39,23 @@ export class ServicesService {
 
   async findAll(): Promise<Service[]> {
     try {
-      const result = await this.serviceRepository.find({ relations: ['type'], order: { id: 'DESC' } });
+      const selectField = [
+        'sv.id',
+        'sv.code',
+        'sv.laName',
+        'sv.enName',
+        'sv.createdAt',
+        'sv.updatedAt',
+        'svt.id',
+        'svt.code',
+        'svt.name',
+      ];
+      const result = await this.serviceRepository
+        .createQueryBuilder('sv')
+        .select(selectField)
+        .leftJoin('sv.type', 'svt')
+        .orderBy('sv.id', 'DESC')
+        .getMany();
       return result;
     } catch (error) {
       throw new BadRequestException(error.message);
@@ -48,14 +64,29 @@ export class ServicesService {
 
   async findOne(id: number): Promise<Service> {
     try {
-      const options: FindOneOptions<Service> = { where: { id: id }, relations: ['type'] };
-      const Service = await this.serviceRepository.findOne(options);
+      const selectField = [
+        'sv.id',
+        'sv.code',
+        'sv.laName',
+        'sv.enName',
+        'sv.createdAt',
+        'sv.updatedAt',
+        'svt.id',
+        'svt.code',
+        'svt.name',
+      ];
+      const result = await this.serviceRepository
+        .createQueryBuilder('sv')
+        .select(selectField)
+        .leftJoin('sv.type', 'svt')
+        .where({ id: id })
+        .getOne();
 
-      if (!Service) {
+      if (!result) {
         throw new NotFoundException('ບໍ່ພົບຂໍ້ມູນ');
       }
 
-      return Service;
+      return result;
     } catch (error) {
       if (error.status) {
         throw new HttpException(error.message, error.status);
@@ -72,13 +103,17 @@ export class ServicesService {
         const newData = this.findOne(id);
         return newData;
       } else {
-        throw new NotFoundException('ບໍ່ສາມາດແກ້ໄຂຂໍ້ມູນໄດ້');
+        throw new NotFoundException('ບໍ່ພົບຂໍ້ມູນ');
       }
     } catch (error) {
       if (error.errno == 1062) {
         throw new HttpException('ລະຫັດບໍ່ສາມາດຊ້ຳກັນໄດ້ ກະລຸນາລອງໃໝ່', HttpStatus.CONFLICT);
       }
-      throw new InternalServerErrorException(error); // error 400
+
+      if (error.status) {
+        throw new HttpException(error.message, error.status);
+      }
+      throw new BadRequestException(error.message);
     }
   }
 

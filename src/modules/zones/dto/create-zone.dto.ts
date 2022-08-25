@@ -1,5 +1,10 @@
-import { IsNotEmpty } from 'class-validator';
+import { Type } from 'class-transformer';
+import { IsNotEmpty, IsNotEmptyObject, IsObject, ValidateNested } from 'class-validator';
 
+export class CommonModel {
+  @IsNotEmpty()
+  id: number;
+}
 export class CreateZoneDto {
   @IsNotEmpty({ message: 'ກະລຸນາປ້ອນລະຫັດ' })
   code: string;
@@ -7,6 +12,9 @@ export class CreateZoneDto {
   @IsNotEmpty({ message: 'ກະລຸນາປ້ອນຊື່ໂຊນ' })
   name: string;
 
-  @IsNotEmpty({ message: 'ກະລຸນາປ້ອນປະເພດບໍລິການ' })
-  typeId: number;
+  @IsNotEmptyObject()
+  @IsObject()
+  @ValidateNested()
+  @Type(() => CommonModel)
+  serviceType: CommonModel;
 }
