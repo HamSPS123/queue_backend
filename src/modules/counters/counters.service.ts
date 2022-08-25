@@ -135,4 +135,40 @@ export class CountersService {
       throw new BadRequestException(error);
     }
   }
+
+  async findFromZone(id: number): Promise<Counter[]> {
+    try {
+      const selectField = [
+        'cnt.id',
+        'cnt.name',
+        'cnt.avgWaitingTime',
+        'cnt.status',
+        'zn.id',
+        'zn.code',
+        'zn.name',
+        'zn.typeId',
+        'cnt.createdAt',
+        'cnt.updatedAt',
+      ];
+      const result = await this.countersRepository
+        .createQueryBuilder('cnt')
+        .select(selectField)
+        .leftJoin('cnt.zone', 'zn')
+        .where({ zoneId: id })
+        .orderBy('cnt.id', 'ASC')
+        .getMany();
+
+      if (result) {
+        return result;
+      } else {
+        throw new NotFoundException('ບໍ່ພົບຂໍ້ມູນ');
+      }
+    } catch (error) {
+      if (error.status) {
+        throw new HttpException(error.message, error.status);
+      }
+
+      throw new BadRequestException(error.message);
+    }
+  }
 }

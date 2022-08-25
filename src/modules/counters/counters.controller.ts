@@ -43,4 +43,10 @@ export class CountersController {
     const result = await this.countersService.removeSelected(ids);
     return result;
   }
+
+  @Get('zone/:id')
+  async findFromZone(@Param('id') id: string): Promise<Counter[]> {
+    const result = await this.countersService.findFromZone(+id);
+    return result;
+  }
 }
