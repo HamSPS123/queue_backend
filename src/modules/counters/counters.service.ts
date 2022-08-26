@@ -171,4 +171,28 @@ export class CountersService {
       throw new BadRequestException(error.message);
     }
   }
+
+  async updateStatus(id: number): Promise<Counter> {
+    try {
+      const update = await this.countersRepository
+        .createQueryBuilder()
+        .update()
+        .set({
+          status: false,
+        })
+        .where({ id: id })
+        .execute();
+
+      if (update.affected) {
+        const result = this.findOne(id);
+        return result;
+      }
+      throw new NotFoundException('ບໍ່ພົບຂໍ້ມູນ');
+    } catch (error) {
+      if (error.status) {
+        throw new HttpException(error.message, error.status);
+      }
+      throw new BadRequestException(error.message);
+    }
+  }
 }

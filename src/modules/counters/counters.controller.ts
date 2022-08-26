@@ -49,4 +49,10 @@ export class CountersController {
     const result = await this.countersService.findFromZone(+id);
     return result;
   }
+
+  @Patch('status/:id')
+  async updateStatus(@Param('id') id: string): Promise<Counter> {
+    const result = await this.countersService.updateStatus(+id);
+    return result;
+  }
 }
