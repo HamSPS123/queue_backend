@@ -48,7 +48,7 @@ export class Queue {
   @Column({ name: 'user_id', nullable: true })
   userId: number;
 
-  @Column({ name: 'status_id' })
+  @Column({ name: 'status_id', default: 1 })
   statusId: number;
 
   @CreateDateColumn({ name: 'created_at' })

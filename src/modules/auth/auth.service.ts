@@ -20,7 +20,7 @@ export class AuthService {
       const user = await this.usersRepository.findOne({
         select: ['id', 'password', 'roleId'],
         where: { username: body.username },
-      });      
+      });
 
       if (!user) {
         throw new UnauthorizedException('ບໍ່ພົບຊື່ຜູ້ໃຊ້ນີ້');
@@ -34,9 +34,9 @@ export class AuthService {
       const payload = {
         userId: user.id,
         roleId: user.roleId,
-      };      
+      };
 
-      const token = await this.jwtService.signAsync(payload, { secret: process.env.JWT_SECRET_KEY });      
+      const token = await this.jwtService.signAsync(payload, { secret: process.env.JWT_SECRET_KEY });
 
       return {
         tokenType: 'Bearer',

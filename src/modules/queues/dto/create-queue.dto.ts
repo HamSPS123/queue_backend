@@ -1,11 +1,22 @@
-import { IsNotEmpty, IsOptional } from 'class-validator';
+import { Type } from 'class-transformer';
+import { IsNotEmpty, IsNotEmptyObject, IsObject, IsOptional, ValidateNested } from 'class-validator';
 
+export class CommonModel {
+  @IsNotEmpty()
+  id: number;
+}
 export class CreateQueueDto {
-  @IsNotEmpty({ message: 'ກະລຸນາປ້ອນປະເພດບໍລິການ' })
-  serviceTypeId: number;
+  @IsNotEmptyObject()
+  @IsObject()
+  @ValidateNested()
+  @Type(() => CommonModel)
+  serviceType: CommonModel;
 
-  @IsNotEmpty({ message: 'ກະລຸນາປ້ອນບໍລິການ' })
-  serviceId: number;
+  @IsNotEmptyObject()
+  @IsObject()
+  @ValidateNested()
+  @Type(() => CommonModel)
+  service: CommonModel;
 
   @IsOptional()
   currentQueue: string;
@@ -18,15 +29,18 @@ export class CreateQueueDto {
 
   @IsOptional()
   length: string;
-
-  @IsNotEmpty({ message: 'ກະລຸນາປ້ອນສະຖານະ' })
-  statusId: number;
 }
 
 export class CallQueueDto {
-  @IsNotEmpty({ message: 'ກະລຸນາປ້ອນໝາຍເລກເຄົາເຕີ' })
-  counterId: number;
+  @IsNotEmptyObject()
+  @IsObject()
+  @ValidateNested()
+  @Type(() => CommonModel)
+  counter: CommonModel;
 
-  @IsNotEmpty({ message: 'ກະລຸນາປ້ອນຂໍ້ມູນຜູ້ໃຊ້' })
-  userId: number;
+  @IsNotEmptyObject()
+  @IsObject()
+  @ValidateNested()
+  @Type(() => CommonModel)
+  user: CommonModel;
 }

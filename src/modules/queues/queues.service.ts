@@ -16,7 +16,7 @@ export class QueuesService {
 
   async create(data: CreateQueueDto): Promise<Queue> {
     try {
-      const getQueue = await this.getCurrentQueue(data.serviceTypeId);
+      const getQueue = await this.getCurrentQueue(data.serviceType.id);
 
       data.currentQueue = this.utilsService.prefix(getQueue + 1);
       data.nextQueue = this.utilsService.prefix(getQueue + 2);
@@ -24,9 +24,7 @@ export class QueuesService {
 
       data.length = await (await this.getQueueLength()).toString();
 
-      const newData = { ...data };
-
-      const result = await this.queuesRepository.save(newData);
+      const result = await this.queuesRepository.save(data);
 
       if (result) {
         const find = await this.findOne(result.id);
@@ -38,23 +36,99 @@ export class QueuesService {
     }
   }
 
-  findAll() {
-    return `This action returns all queues`;
+  async findAll(): Promise<Queue[]> {
+    try {
+      const result = await this.queuesRepository.find({ relations: ['serviceType', 'service', 'counter', 'user'] });
+      if (!result) throw new NotFoundException('ບໍ່ພົບຂໍ້ມູນ');
+      return result;
+    } catch (error) {
+      if (error.status) throw new HttpException(error.message, error.status);
+      throw new BadRequestException(error.message);
+    }
+  }
+
+  async findTody(): Promise<Queue[]> {
+    try {
+      const selectFields = [
+        'qu.id',
+        'qu.currentQueue',
+        'qu.length',
+        'qu.nextQueue',
+        'qu.prevQueue',
+        'sv.code',
+        'sv.laName',
+        'sv.enName',
+        'svt.code',
+        'svt.name',
+        'stt.id',
+        'stt.name',
+        'urs.id',
+        'urs.username',
+        'urs.firstName',
+        'urs.lastName',
+        'qu.createdAt',
+      ];
+
+      const whereOption = 'DATE(qu.created_at)=DATE(NOW())';
+
+      const result = await this.queuesRepository
+        .createQueryBuilder('qu')
+        .select(selectFields)
+        .leftJoin('qu.service', 'sv')
+        .leftJoin('qu.serviceType', 'svt')
+        .leftJoin('qu.status', 'stt')
+        .leftJoin('qu.user', 'urs')
+        .where(whereOption)
+        .getMany();
+      return result;
+    } catch (error) {
+      throw new BadRequestException(error.message);
+    }
   }
 
   async findOne(id: number): Promise<Queue> {
     try {
-      const options: FindOneOptions<Queue> = {
-        where: { id: id },
-        relations: ['counter', 'user', 'serviceType', 'service', 'status'],
-      };
-      const user = await this.queuesRepository.findOne(options);
+      const selectFields = [
+        'qu.id',
+        'qu.currentQueue',
+        'qu.length',
+        'qu.nextQueue',
+        'qu.prevQueue',
+        'sv.code',
+        'sv.laName',
+        'sv.enName',
+        'svt.code',
+        'svt.name',
+        'stt.id',
+        'stt.name',
+        'urs.id',
+        'urs.username',
+        'urs.firstName',
+        'urs.lastName',
+        'qu.createdAt',
+        'qu.updatedAt',
+      ];
+      // const options: FindOneOptions<Queue> = {
+      //   where: { id: id },
+      //   relations: ['counter', 'user', 'serviceType', 'service', 'status'],
+      // };
+      // const result = await this.queuesRepository.findOne(options);
 
-      if (!user) {
+      const result = await this.queuesRepository
+        .createQueryBuilder('qu')
+        .select(selectFields)
+        .leftJoin('qu.serviceType', 'svt')
+        .leftJoin('qu.service', 'sv')
+        .leftJoin('qu.status', 'stt')
+        .leftJoin('qu.user', 'urs')
+        .where({ id: id })
+        .getOne();
+
+      if (!result) {
         throw new NotFoundException('ບໍ່ພົບຂໍ້ມູນ');
       }
 
-      return user;
+      return result;
     } catch (error) {
       if (error.status) {
         throw new HttpException(error.message, error.status);
@@ -92,9 +166,9 @@ export class QueuesService {
           .createQueryBuilder()
           .update()
           .set({
-            counterId: data.counterId,
+            counterId: data.counter.id,
             statusId: 2,
-            userId: data.userId,
+            userId: data.user.id,
           })
           .where('id=:id', { id: queueId })
           .execute();
@@ -196,7 +270,7 @@ export class QueuesService {
     }
   }
 
-  async display() {
+  async display(): Promise<Queue[]> {
     try {
       const selectFields = [
         'qu.id',
